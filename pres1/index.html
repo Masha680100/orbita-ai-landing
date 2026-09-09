@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ИИ-Продавец 24/7 | Orbita ///AL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Orbitron', sans-serif; user-select: none; }
+    body, html { width: 100%; min-height: 100vh; background-color: #010105; color: #fff; overflow-x: hidden; }
+    canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+    .container { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 25px 15px; }
+    .back-btn { display: inline-block; color: #00f0ff; text-decoration: none; font-size: 0.75rem; font-weight: 700; margin-bottom: 20px; letter-spacing: 1.5px; }
+
+    .hero { text-align: center; margin-bottom: 25px; }
+    .tag { font-size: 0.65rem; color: #ff0055; letter-spacing: 2px; font-weight: 800; margin-bottom: 8px; }
+    .title { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: #00f0ff; text-shadow: 0 0 15px rgba(0,240,255,0.6); margin-bottom: 8px; }
+    .subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.7); }
+
+    .card { background: rgba(5, 10, 25, 0.82); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 18px; padding: 22px; margin-bottom: 20px; backdrop-filter: blur(15px); }
+    .card-title { font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 14px; letter-spacing: 1px; }
+
+    .chat-box { background: rgba(1, 1, 5, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 12px; height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .msg { max-width: 85%; padding: 8px 12px; border-radius: 10px; font-size: 0.7rem; line-height: 1.4; }
+    .msg.bot { background: rgba(0, 240, 255, 0.15); border: 1px solid #00f0ff; align-self: flex-start; color: #fff; }
+    .msg.user { background: rgba(255, 0, 85, 0.2); border: 1px solid #ff0055; align-self: flex-end; color: #fff; }
+
+    .sim-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .sim-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(0,240,255,0.3); color: #00f0ff; padding: 10px; border-radius: 8px; font-size: 0.65rem; font-weight: 700; cursor: pointer; }
+
+    .range-input { width: 100%; margin: 10px 0; accent-color: #00f0ff; }
+    .result-box { background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; padding: 12px; border-radius: 10px; text-align: center; }
+    .result-val { font-size: 1.2rem; font-weight: 900; color: #00ff88; }
+
+    .feature-item { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; color: rgba(255,255,255,0.85); margin-bottom: 10px; }
+    .feature-item::before { content: '◆'; color: #00f0ff; }
+    .feature-item.highlight { color: #00f0ff; font-weight: 800; }
+
+    .btn-main { display: block; background: linear-gradient(135deg, #00f0ff, #0088ff); color: #010105; font-size: 0.8rem; font-weight: 900; padding: 16px; border-radius: 30px; text-align: center; text-decoration: none; box-shadow: 0 0 20px rgba(0,240,255,0.4); letter-spacing: 2px; }
+
+    .contacts { text-align: center; font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-top: 20px; }
+    .contacts a { color: #00f0ff; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <canvas id="spaceCanvas"></canvas>
+
+  <div class="container">
+    <a href="../" class="back-btn">◄ НАЗАД В ХАБ</a>
+
+    <div class="hero">
+      <div class="tag">MODULE 01 // AI SALES</div>
+      <h1 class="title">ИИ-Продавец 24/7</h1>
+      <p class="subtitle">Увеличьте конверсию лидов без расширения отдела продаж</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚡ 1. СИМУЛЯТОР ДИАЛОГА</div>
+      <div class="chat-box" id="chat">
+        <div class="msg bot">Приветствую! Я Alex AI. Задайте вопрос о возможностях бота.</div>
+      </div>
+      <div class="sim-btns">
+        <button class="sim-btn" onclick="send('Сколько стоит?', 'Базовый запуск — от 25 000 ₽. Входит подготовка ИИ и интеграции.')">💰 Сколько стоит?</button>
+        <button class="sim-btn" onclick="send('Как управлять?', 'Предоставляется отдельная Веб-Админка для настроек и базы знаний.')">🖥️ Как управлять?</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📊 2. РАСЧЕТ ЭФФЕКТИВНОСТИ</div>
+      <label style="font-size:0.7rem; color:rgba(255,255,255,0.7);">Заявок в месяц: <b id="reqVal" style="color:#00f0ff;">150</b></label>
+      <input type="range" class="range-input" min="30" max="1000" value="150" id="reqInput" oninput="calc()">
+      <div class="result-box">
+        <div style="font-size:0.65rem; color:rgba(255,255,255,0.6);">Прогноз доп. выручки:</div>
+        <div class="result-val" id="roiVal">+ 67,500 ₽</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚙️ 3. АРХИТЕКТУРА И СОСТАВ</div>
+      <div class="feature-item highlight">Отдельная Web-Админ панель (Dashboard)</div>
+      <div class="feature-item">Обучение ИИ на вашей базе знаний и инструкциях</div>
+      <div class="feature-item">Ответы за 3 секунды 24/7 и работа с возражениями</div>
+      <div class="feature-item">Передача готовых лидов в Telegram / CRM</div>
+    </div>
+
+    <a href="https://t.me/upravKAN_bot?start=pres1" target="_blank" class="btn-main">🚀 ЗАПУСТИТЬ ТЕСТ В TELEGRAM</a>
+
+    <div class="contacts">
+      Спецзаказы: <a href="https://t.me/logopedASL" target="_blank">@logopedASL</a> | <a href="https://t.me/order_bots_ai" target="_blank">@order_bots_ai</a>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('spaceCanvas'); const ctx = canvas.getContext('2d');
+    let width, height, step = 0;
+    function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    function draw() {
+      ctx.fillStyle = 'rgba(1, 1, 5, 0.2)'; ctx.fillRect(0, 0, width, height); step += 0.02;
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath(); let yOffset = height * 0.3 + (i * 150);
+        for (let x = 0; x < width; x += 20) {
+          let y = yOffset + Math.sin(x * 0.003 + step + i) * 45;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    function send(u, b) {
+      const c = document.getElementById('chat');
+      c.innerHTML += `<div class="msg user">${u}</div>`;
+      setTimeout(() => { c.innerHTML += `<div class="msg bot">${b}</div>`; c.scrollTop = c.scrollHeight; }, 350);
+    }
+    function calc() {
+      const v = document.getElementById('reqInput').value;
+      document.getElementById('reqVal').innerText = v;
+      document.getElementById('roiVal').innerText = '+ ' + (v * 450).toLocaleString('ru-RU') + ' ₽';
+    }
+  </script>
+</body>
+</html>

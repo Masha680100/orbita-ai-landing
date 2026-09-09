@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Бот-Каталог | Orbita ///AL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Orbitron', sans-serif; user-select: none; }
+    body, html { width: 100%; min-height: 100vh; background-color: #010105; color: #fff; overflow-x: hidden; }
+    canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+    .container { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 25px 15px; }
+    .back-btn { display: inline-block; color: #ff0055; text-decoration: none; font-size: 0.75rem; font-weight: 700; margin-bottom: 20px; letter-spacing: 1.5px; }
+
+    .hero { text-align: center; margin-bottom: 25px; }
+    .tag { font-size: 0.65rem; color: #00f0ff; letter-spacing: 2px; font-weight: 800; margin-bottom: 8px; }
+    .title { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: #ff0055; text-shadow: 0 0 15px rgba(255,0,85,0.6); margin-bottom: 8px; }
+    .subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.7); }
+
+    .card { background: rgba(5, 10, 25, 0.82); border: 1px solid rgba(255, 0, 85, 0.25); border-radius: 18px; padding: 22px; margin-bottom: 20px; backdrop-filter: blur(15px); }
+    .card-title { font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 14px; letter-spacing: 1px; }
+
+    .shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .shop-item { background: rgba(1, 1, 5, 0.6); border: 1px solid rgba(255, 0, 85, 0.3); border-radius: 10px; padding: 10px; text-align: center; }
+    .item-name { font-size: 0.75rem; font-weight: 700; margin-bottom: 4px; }
+    .item-price { font-size: 0.7rem; color: #00f0ff; margin-bottom: 8px; }
+    .add-btn { background: rgba(255, 0, 85, 0.2); border: 1px solid #ff0055; color: #fff; font-size: 0.6rem; font-weight: 800; padding: 6px; border-radius: 6px; cursor: pointer; width: 100%; }
+
+    .cart-box { background: rgba(0, 255, 136, 0.1); border: 1px dashed #00ff88; padding: 10px; border-radius: 8px; font-size: 0.65rem; color: #00ff88; text-align: center; }
+
+    .range-input { width: 100%; margin: 10px 0; accent-color: #ff0055; }
+    .result-box { background: rgba(255, 0, 85, 0.1); border: 1px solid #ff0055; padding: 12px; border-radius: 10px; text-align: center; }
+    .result-val { font-size: 1.2rem; font-weight: 900; color: #ff0055; }
+
+    .feature-item { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; color: rgba(255,255,255,0.85); margin-bottom: 10px; }
+    .feature-item::before { content: '◆'; color: #ff0055; }
+    .feature-item.highlight { color: #ff0055; font-weight: 800; }
+
+    .btn-main { display: block; background: linear-gradient(135deg, #ff0055, #9900ff); color: #fff; font-size: 0.8rem; font-weight: 900; padding: 16px; border-radius: 30px; text-align: center; text-decoration: none; box-shadow: 0 0 20px rgba(255,0,85,0.4); letter-spacing: 2px; }
+
+    .contacts { text-align: center; font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-top: 20px; }
+    .contacts a { color: #ff0055; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <canvas id="spaceCanvas"></canvas>
+
+  <div class="container">
+    <a href="../" class="back-btn">◄ НАЗАД В ХАБ</a>
+
+    <div class="hero">
+      <div class="tag">MODULE 02 // E-COMMERCE</div>
+      <h1 class="title">Бот-Каталог товаров</h1>
+      <p class="subtitle">Магазин внутри Telegram с приемом оплаты и складом (от 30 000 ₽)</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🛍️ 1. ДЕМО-ВИТРИНА</div>
+      <div class="shop-grid">
+        <div class="shop-item">
+          <div class="item-name">Товар Alpha</div>
+          <div class="item-price">2,500 ₽</div>
+          <button class="add-btn" onclick="add('Alpha', 2500)">+ ДОБАВИТЬ</button>
+        </div>
+        <div class="shop-item">
+          <div class="item-name">Товар Neo Pro</div>
+          <div class="item-price">4,900 ₽</div>
+          <button class="add-btn" onclick="add('Neo Pro', 4900)">+ ДОБАВИТЬ</button>
+        </div>
+      </div>
+      <div class="cart-box" id="cartText">🛒 Нажмите "+ ДОБАВИТЬ" для теста корзины.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📈 2. ПРОГНОЗ ПРОДАЖ</div>
+      <label style="font-size:0.7rem; color:rgba(255,255,255,0.7);">Визитов в день: <b id="tVal" style="color:#ff0055;">300</b></label>
+      <input type="range" class="range-input" min="50" max="2000" value="300" id="tInput" oninput="calcShop()">
+      <div class="result-box">
+        <div style="font-size:0.65rem; color:rgba(255,255,255,0.6);">Авто-выручка в месяц:</div>
+        <div class="result-val" id="shopVal">315,000 ₽</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">⚙️ 3. СОСТАВ СИСТЕМЫ</div>
+      <div class="feature-item highlight">Веб-панель управления складом и остатками</div>
+      <div class="feature-item">Подключение эквайринга (СБП, ЮKassa, Tinkoff)</div>
+      <div class="feature-item">Уведомления менеджера и склада в Telegram</div>
+      <div class="feature-item">Система промокодов и рассылок</div>
+    </div>
+
+    <a href="https://t.me/upravKAN_bot?start=pres2" target="_blank" class="btn-main">🛒 ТЕСТ МАГАЗИНА В TELEGRAM</a>
+
+    <div class="contacts">
+      Спецзаказы: <a href="https://t.me/logopedASL" target="_blank">@logopedASL</a> | <a href="https://t.me/order_bots_ai" target="_blank">@order_bots_ai</a>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('spaceCanvas'); const ctx = canvas.getContext('2d');
+    let width, height, step = 0;
+    function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize); resize();
+    function draw() {
+      ctx.fillStyle = 'rgba(1, 1, 5, 0.2)'; ctx.fillRect(0, 0, width, height); step += 0.02;
+      for (let i = 0; i < 3; i++) {
+        ctx.beginPath(); let yOffset = height * 0.3 + (i * 150);
+        for (let x = 0; x < width; x += 20) {
+          let y = yOffset + Math.sin(x * 0.003 + step + i) * 45;
+          if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = 'rgba(255, 0, 85, 0.2)'; ctx.lineWidth = 1.5; ctx.stroke();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    let total = 0;
+    function add(n, p) {
+      total += p;
+      document.getElementById('cartText').innerHTML = `✅ Добавлено: <b>${n}</b> | Итого: <b>${total.toLocaleString('ru-RU')} ₽</b>`;
+    }
+    function calcShop() {
+      const v = document.getElementById('tInput').value;
+      document.getElementById('tVal').innerText = v;
+      document.getElementById('shopVal').innerText = Math.round(v * 30 * 0.035 * 3000).toLocaleString('ru-RU') + ' ₽';
+    }
+  </script>
+</body>
+</html>
