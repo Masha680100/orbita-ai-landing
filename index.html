@@ -3,122 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Запись & Бронирование | Orbita ///AL</title>
+  <title>Orbita ///AL | AI Automation Studio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Orbitron', sans-serif; user-select: none; }
-    body, html { width: 100%; min-height: 100vh; background-color: #010105; color: #fff; overflow-x: hidden; }
+    body, html { width: 100%; height: 100%; overflow-x: hidden; background-color: #010105; color: #fff; }
     canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+    .interface { position: relative; z-index: 10; width: 100%; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; padding: 25px 20px; max-width: 1100px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .brand-header { display: flex; align-items: center; gap: 12px; }
+    .logo-icon-small { width: 36px; height: 36px; filter: drop-shadow(0 0 10px rgba(0,240,255,0.8)); }
+    .logo-title { font-size: 0.95rem; font-weight: 900; letter-spacing: 2px; color: #00f0ff; text-shadow: 0 0 10px rgba(0,240,255,0.8); }
+    .logo-subtitle { font-size: 0.55rem; letter-spacing: 2px; color: #ff0055; text-shadow: 0 0 8px rgba(255,0,85,0.8); }
+    .status { font-size: 0.65rem; color: #00ff88; letter-spacing: 2px; border: 1px solid rgba(0,255,136,0.4); padding: 5px 12px; background: rgba(0,255,136,0.05); }
 
-    .container { position: relative; z-index: 10; max-width: 800px; margin: 0 auto; padding: 25px 15px; }
-    .back-btn { display: inline-block; color: #00ff88; text-decoration: none; font-size: 0.75rem; font-weight: 700; margin-bottom: 20px; letter-spacing: 1.5px; }
+    .top-hero { background: rgba(2, 2, 8, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(0, 240, 255, 0.25); border-radius: 20px; padding: 30px 20px; text-align: center; margin-bottom: 25px; box-shadow: 0 0 40px rgba(0,0,0,0.8); }
+    .neon-emblem { width: 110px; height: 110px; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,240,255,0.6)) drop-shadow(0 0 40px rgba(255,0,85,0.4)); animation: cosmicFloat 4s ease-in-out infinite alternate; }
+    @keyframes cosmicFloat { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-6px) scale(1.03); } }
+    .main-title { font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 900; letter-spacing: 4px; color: #00f0ff; text-shadow: 0 0 20px rgba(0,240,255,0.6); }
+    .sub-brand-title { font-size: 0.85rem; font-weight: 700; letter-spacing: 5px; color: #ff0055; text-transform: uppercase; margin-bottom: 12px; }
+    .hero-subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.7); letter-spacing: 1.5px; margin-bottom: 20px; }
 
-    .hero { text-align: center; margin-bottom: 25px; }
-    .tag { font-size: 0.65rem; color: #00ff88; letter-spacing: 2px; font-weight: 800; margin-bottom: 8px; }
-    .title { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: #00ff88; text-shadow: 0 0 15px rgba(0,255,136,0.6); margin-bottom: 8px; }
-    .subtitle { font-size: 0.75rem; color: rgba(255,255,255,0.7); }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; text-align: left; font-size: 0.7rem; color: rgba(255,255,255,0.8); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+    .f-item { display: flex; align-items: center; }
+    .f-item::before { content: '◆'; color: #00f0ff; margin-right: 8px; font-size: 0.5rem; text-shadow: 0 0 8px #00f0ff; }
 
-    .card { background: rgba(5, 10, 25, 0.82); border: 1px solid rgba(0, 255, 136, 0.25); border-radius: 18px; padding: 22px; margin-bottom: 20px; backdrop-filter: blur(15px); }
-    .card-title { font-size: 0.9rem; font-weight: 800; color: #fff; margin-bottom: 14px; letter-spacing: 1px; }
+    .bottom-hub { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .card { background: rgba(5, 10, 25, 0.8); border: 1px solid rgba(0, 240, 255, 0.2); border-radius: 16px; padding: 20px; text-decoration: none; color: inherit; transition: all 0.3s ease; backdrop-filter: blur(15px); display: flex; flex-direction: column; justify-content: space-between; }
+    .card:hover { transform: translateY(-4px); border-color: #00f0ff; box-shadow: 0 0 25px rgba(0,240,255,0.25); }
+    .card-tag { font-size: 0.6rem; color: #ff0055; letter-spacing: 2px; font-weight: 800; margin-bottom: 8px; }
+    .card-title { font-size: 1rem; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .card-desc { font-size: 0.68rem; color: rgba(255,255,255,0.6); line-height: 1.4; margin-bottom: 12px; }
+    .card-price { font-size: 0.72rem; color: #00ff88; font-weight: 700; margin-bottom: 14px; }
+    
+    .cyber-btn { background: linear-gradient(135deg, #00f0ff, #0088ff); color: #010105; font-size: 0.65rem; font-weight: 900; letter-spacing: 2px; padding: 10px; border-radius: 25px; text-align: center; border: none; cursor: pointer; box-shadow: 0 0 15px rgba(0,240,255,0.4); }
 
-    .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-    .slot-btn { background: rgba(1, 1, 5, 0.6); border: 1px solid rgba(0, 255, 136, 0.3); color: #fff; padding: 10px 4px; border-radius: 8px; font-size: 0.6rem; font-weight: 700; cursor: pointer; text-align: center; }
-    .slot-btn.active { background: #00ff88; color: #010105; font-weight: 900; box-shadow: 0 0 10px #00ff88; }
-
-    .book-box { background: rgba(0, 240, 255, 0.1); border: 1px dashed #00f0ff; padding: 10px; border-radius: 8px; font-size: 0.65rem; color: #00f0ff; text-align: center; }
-
-    .range-input { width: 100%; margin: 10px 0; accent-color: #00ff88; }
-    .result-box { background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; padding: 12px; border-radius: 10px; text-align: center; }
-    .result-val { font-size: 1.2rem; font-weight: 900; color: #00ff88; }
-
-    .feature-item { display: flex; align-items: center; gap: 10px; font-size: 0.7rem; color: rgba(255,255,255,0.85); margin-bottom: 10px; }
-    .feature-item::before { content: '◆'; color: #00ff88; }
-    .feature-item.highlight { color: #00ff88; font-weight: 800; }
-
-    .btn-main { display: block; background: linear-gradient(135deg, #00ff88, #00b36b); color: #010105; font-size: 0.8rem; font-weight: 900; padding: 16px; border-radius: 30px; text-align: center; text-decoration: none; box-shadow: 0 0 20px rgba(0,255,136,0.4); letter-spacing: 2px; }
-
-    .contacts { text-align: center; font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-top: 20px; }
-    .contacts a { color: #00ff88; text-decoration: none; }
+    footer { background: rgba(2, 2, 8, 0.8); border: 1px solid rgba(255, 0, 85, 0.3); border-radius: 16px; padding: 20px; text-align: center; backdrop-filter: blur(10px); }
+    .footer-title { font-size: 0.85rem; font-weight: 800; color: #00f0ff; margin-bottom: 10px; }
+    .bot-link-btn { display: inline-block; background: transparent; border: 1px solid #ff0055; color: #ff0055; padding: 10px 22px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-decoration: none; letter-spacing: 1.5px; box-shadow: 0 0 15px rgba(255,0,85,0.2); }
+    .contacts-line { margin-top: 12px; font-size: 0.65rem; color: rgba(255,255,255,0.5); }
+    .contacts-line a { color: #00f0ff; text-decoration: none; font-weight: 700; margin: 0 4px; }
   </style>
 </head>
 <body>
   <canvas id="spaceCanvas"></canvas>
-
-  <div class="container">
-    <a href="../" class="back-btn">◄ НАЗАД В ХАБ</a>
-
-    <div class="hero">
-      <div class="tag">MODULE 03 // BOOKING</div>
-      <h1 class="title">Автоматизация Записей</h1>
-      <p class="subtitle">ИИ-администратор и система бронирования (от 20 000 ₽)</p>
-    </div>
-
-    <div class="card">
-      <div class="card-title">📅 1. ВЫБОР ВРЕМЕНИ (ДЕМО)</div>
-      <div class="slots-grid">
-        <button class="slot-btn" onclick="sel(this, 'Завтра 12:00')">Завтра 12:00</button>
-        <button class="slot-btn" onclick="sel(this, 'Завтра 15:30')">Завтра 15:30</button>
-        <button class="slot-btn" onclick="sel(this, 'Завтра 18:00')">Завтра 18:00</button>
+  <div class="interface">
+    <header>
+      <div class="brand-header">
+        <svg class="logo-icon-small" viewBox="0 0 100 100">
+          <polygon points="50,12 88,31 88,69 50,88 12,69 12,31" fill="rgba(0,240,255,0.1)" stroke="#00f0ff" stroke-width="4"/>
+          <circle cx="50" cy="50" r="16" fill="#00f0ff"/>
+          <ellipse cx="50" cy="50" rx="42" ry="14" fill="none" stroke="#00f0ff" stroke-width="4" transform="rotate(35 50 50)"/>
+          <ellipse cx="50" cy="50" rx="42" ry="14" fill="none" stroke="#ff0055" stroke-width="4" transform="rotate(-35 50 50)"/>
+        </svg>
+        <div>
+          <div class="logo-title">ORBITA ///AL</div>
+          <div class="logo-subtitle">AI ///AUTOMATION</div>
+        </div>
       </div>
-      <div class="book-box" id="bookText">👆 Нажмите на слот для проверки записи.</div>
-    </div>
+      <div class="status">ALL SYSTEMS ONLINE</div>
+    </header>
 
-    <div class="card">
-      <div class="card-title">⏳ 2. ЭКОНОМИЯ ВРЕМЕНИ</div>
-      <label style="font-size:0.7rem; color:rgba(255,255,255,0.7);">Записей в день: <b id="bVal" style="color:#00ff88;">15</b></label>
-      <input type="range" class="range-input" min="3" max="60" value="15" id="bInput" oninput="calcBook()">
-      <div class="result-box">
-        <div style="font-size:0.65rem; color:rgba(255,255,255,0.6);">Сэкономлено часов администратора в месяц:</div>
-        <div class="result-val" id="timeSaved">52 часа</div>
+    <div class="top-hero">
+      <h1 class="main-title">ORBITA ///AL</h1>
+      <div class="sub-brand-title">AI ///AUTOMATION STUDIO</div>
+      <div class="hero-subtitle">Интерактивные ИИ-системы, веб-панели и автономные роботы продаж</div>
+      <div class="features-grid">
+        <div class="f-item">YandexGPT Engine</div>
+        <div class="f-item">FastAPI Web Dashboard</div>
+        <div class="f-item">SaaS Бронирование & Склад</div>
+        <div class="f-item">Self-Healing Архитектура</div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">⚙️ 3. СОСТАВ СИСТЕМЫ</div>
-      <div class="feature-item highlight">Отдельный Календарь-Админка для расписания</div>
-      <div class="feature-item">Авто-напоминания клиентам за 24ч и 2ч в Telegram</div>
-      <div class="feature-item">Интеграция с Google Календарем и Yclients</div>
-      <div class="feature-item">Предварительный опрос и квалификация клиента</div>
+    <!-- 4 МОДУЛЯ-КАРТОЧКИ -->
+    <div class="bottom-hub">
+      <a href="./pres1/" class="card">
+        <div>
+          <div class="card-tag">MODULE 01 // SALES</div>
+          <div class="card-title">ИИ-Продавец 24/7</div>
+          <div class="card-desc">Авто-продажи, квалификация лидов и обработка возражений.</div>
+          <div class="card-price">Внедрение: от 25 000 ₽</div>
+        </div>
+        <div class="cyber-btn">ОТКРЫТЬ ➔</div>
+      </a>
+
+      <a href="./pres2/" class="card">
+        <div>
+          <div class="card-tag">MODULE 02 // E-COM</div>
+          <div class="card-title">Бот-Каталог</div>
+          <div class="card-desc">Магазин внутри Telegram с веб-панелью склада и приемом оплаты.</div>
+          <div class="card-price">Внедрение: от 30 000 ₽</div>
+        </div>
+        <div class="cyber-btn">ОТКРЫТЬ ➔</div>
+      </a>
+
+      <a href="./pres3/" class="card">
+        <div>
+          <div class="card-tag">MODULE 03 // SERVICE</div>
+          <div class="card-title">Запись и Бронирование</div>
+          <div class="card-desc">Онлайн-календарь, авто-напоминания и панель администратора.</div>
+          <div class="card-price">Внедрение: от 20 000 ₽</div>
+        </div>
+        <div class="cyber-btn">ОТКРЫТЬ ➔</div>
+      </a>
+
+      <a href="./pres4/" class="card">
+        <div>
+          <div class="card-tag">MODULE 04 // PROOF</div>
+          <div class="card-title">Твердые Доказательства</div>
+          <div class="card-desc">Видео-разборы FastAPI админки, живые тесты и устойчивость.</div>
+          <div class="card-price">100% Uptime & Пруфы</div>
+        </div>
+        <div class="cyber-btn">СМОТРЕТЬ ПРУФЫ ➔</div>
+      </a>
     </div>
 
-    <a href="https://t.me/upravKAN_bot?start=pres3" target="_blank" class="btn-main">📅 ТЕСТ ЗАПИСИ В TELEGRAM</a>
-
-    <div class="contacts">
-      Спецзаказы: <a href="https://t.me/logopedASL" target="_blank">@logopedASL</a> | <a href="https://t.me/order_bots_ai" target="_blank">@order_bots_ai</a>
-    </div>
+    <footer>
+      <div class="footer-title">⚡ Alex AI Sales Assistant</div>
+      <a href="https://t.me/upravKAN_bot" target="_blank" class="bot-link-btn">⚡ ТЕСТ И РАСЧЕТ В TELEGRAM</a>
+      <div class="contacts-line">
+        Спецзаказы: <a href="https://t.me/logopedASL" target="_blank">@logopedASL</a> | <a href="https://t.me/mvp_bots_store" target="_blank">@mvp_bots_store</a>
+      </div>
+    </footer>
   </div>
 
   <script>
-    const canvas = document.getElementById('spaceCanvas'); const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById('spaceCanvas');
+    const ctx = canvas.getContext('2d');
     let width, height, step = 0;
     function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
     window.addEventListener('resize', resize); resize();
-    function draw() {
+    function drawScene() {
       ctx.fillStyle = 'rgba(1, 1, 5, 0.2)'; ctx.fillRect(0, 0, width, height); step += 0.02;
-      for (let i = 0; i < 3; i++) {
-        ctx.beginPath(); let yOffset = height * 0.3 + (i * 150);
+      for (let i = 0; i < 4; i++) {
+        ctx.beginPath();
+        let yOffset = height * 0.25 + (i * 140);
         for (let x = 0; x < width; x += 20) {
-          let y = yOffset + Math.sin(x * 0.003 + step + i) * 45;
+          let y = yOffset + Math.sin(x * 0.0025 + step + i) * 50;
           if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = 'rgba(0, 255, 136, 0.2)'; ctx.lineWidth = 1.5; ctx.stroke();
+        ctx.strokeStyle = i % 2 === 0 ? 'rgba(0, 240, 255, 0.25)' : 'rgba(255, 0, 85, 0.25)';
+        ctx.lineWidth = 2; ctx.stroke();
       }
-      requestAnimationFrame(draw);
+      requestAnimationFrame(drawScene);
     }
-    draw();
-
-    function sel(btn, time) {
-      document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.getElementById('bookText').innerHTML = `✅ Забронирован слот: <b>${time}</b>. Уведомление отправлено в админку!`;
-    }
-    function calcBook() {
-      const v = document.getElementById('bInput').value;
-      document.getElementById('bVal').innerText = v;
-      document.getElementById('timeSaved').innerText = Math.round((v * 7 * 30) / 60) + ' часов';
-    }
+    drawScene();
   </script>
 </body>
 </html>
